@@ -1,0 +1,5 @@
+{
+  "driver_name": "postgres",
+  "database_url": "user=mihildrozdov password=QWAszx2002 dbname=postgres sslmode=disable",
+  "log_level": "debug"
+}
