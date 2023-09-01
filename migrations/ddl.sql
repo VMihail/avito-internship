@@ -23,9 +23,9 @@ alter table segmentation_service.employee_experiment add if not exists date_dele
 create or replace function delete_employee_experiment_by_timer() returns trigger as $$
 begin
     update segmentation_service.employee_experiment
-    set dateremoved = date_delete
-    WHERE employee_experiment_id = OLD.employee_experiment_id;
-    RETURN NULL;
+    set dateremoved = date_delete, date_delete = null
+    where employee_experiment_id = OLD.employee_experiment_id;
+    return null;
 end;
 $$ language plpgsql;
 

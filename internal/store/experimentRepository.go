@@ -114,6 +114,45 @@ func GetReportById(employeeId int) ([]model.Report, error) {
 	return result, nil
 }
 
+func AddPercentageOfEmployeeToExperiment(percent float32, experimentNames []string) error {
+	logger.Info("method <AddPercentageOfEmployeeToExperiment> started")
+	employees, err := GetPercentageOfEmployee(percent)
+	if err != nil {
+		return err
+	}
+	for _, p := range employees {
+		err := AddEmployeeToExperiment(experimentNames, p.Id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func AddEmployeeToExperimentWithTTL(experimentNames []string, employeeId int, dateDelete string) error {
+	logger.Info("method <AddEmployeeToExperimentWithTTL> started")
+	_, err := db.Exec(getTransactionAddWithTTL(experimentNames, employeeId, dateDelete))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getTransactionAddWithTTL(experimentNames []string, employeeId int, dateDelete string) string {
+	logger.Info("method <getTransactionAddWithTTL> started")
+	return getTransaction(experimentNames, employeeId, func(experimentNames []string, employeeId int) string {
+		result := ""
+		for i := 0; i < len(experimentNames); i++ {
+			exp := model.Experiment{Id: -1, Name: experimentNames[i]}
+			if err := exp.Validate(); err != nil {
+				return ""
+			}
+			result += fmt.Sprintf("insert into segmentation_service.employee_experiment (employee_id, experiment_id, dateadded, date_delete) values (%d, (select experiment_id from segmentation_service.experiment where experiment_name = '%s'), now(), now() + %s);\n", employeeId, experimentNames[i], dateDelete)
+		}
+		return result
+	})
+}
+
 func getReport(result *[]model.Report, query string) error {
 	logger.Info("method <getReport> started")
 	rows, err := db.Query(query)
@@ -145,19 +184,4 @@ func getTransaction(experimentNames []string,
 	result += "commit transaction;"
 	fmt.Println(result)
 	return result
-}
-
-func AddPercentageOfEmployeeToExperiment(percent float32, experimentNames []string) error {
-	logger.Info("method <AddPercentageOfEmployeeToExperiment> started")
-	employees, err := GetPercentageOfEmployee(percent)
-	if err != nil {
-		return err
-	}
-	for _, p := range employees {
-		err := AddEmployeeToExperiment(experimentNames, p.Id)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }

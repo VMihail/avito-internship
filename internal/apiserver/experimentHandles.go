@@ -159,3 +159,20 @@ func (s *APIServer) handleAddPercentageOfEmployeeToExperiment() http.HandlerFunc
 		_, _ = io.WriteString(writer, "Successfully")
 	}
 }
+
+func (s *APIServer) handleAddEmployeeToExperimentWithTTL() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		id, err := strconv.ParseInt(request.URL.Query().Get("employeeId"), 10, 8)
+		if err != nil {
+			writeError(writer, err)
+			return
+		}
+		ttl := request.URL.Query().Get("ttl")
+		a := request.URL.Query().Get("experiments")
+		err = store.AddEmployeeToExperimentWithTTL(strings.Split(a, ","), int(id), ttl)
+		if err != nil {
+			writeError(writer, err)
+			return
+		}
+	}
+}
