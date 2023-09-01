@@ -69,3 +69,21 @@ func GetExperimentsById(id int) ([]model.Experiment, error) {
 	}
 	return result, nil
 }
+
+func GetPercentageOfEmployee(percent float32) ([]model.Employee, error) {
+	logger.Info("method <GetPercentageOfEmployee> started")
+	rows, err := db.Query(fmt.Sprintf("select * from segmentation_service.employee limit (%f / 100.0) * (select count(*) from segmentation_service.employee);", percent))
+	if err != nil {
+		return nil, err
+	}
+	var result []model.Employee
+	for rows.Next() {
+		p := model.Employee{}
+		err := rows.Scan(&p.Id)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, p)
+	}
+	return result, err
+}

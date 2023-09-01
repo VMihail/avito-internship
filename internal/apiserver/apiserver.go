@@ -53,6 +53,8 @@ func (s *APIServer) configRouter() {
 	s.router.HandleFunc("/getExperimentsById", s.handleGetExperimentsById())
 
 	s.router.HandleFunc("/getReportById", s.getReportById())
+	s.router.HandleFunc("/getPercentageOfEmployees", s.handleGetPercentageOfEmployees())
+	s.router.HandleFunc("/addPercentageOfEmployeeToExperiment", s.handleAddPercentageOfEmployeeToExperiment())
 }
 
 func writeError(writer http.ResponseWriter, err error) {

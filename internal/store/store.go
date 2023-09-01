@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	configPath = "/Users/mihildrozdov/GolandProjects/avito-internship/config/dataBase.json"
+	configPath = "../avito-internship/config/dataBase.json"
 )
 
 var (

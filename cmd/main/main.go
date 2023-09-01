@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	configPath = "/Users/mihildrozdov/GolandProjects/avito-internship/config/apiserver.json"
+	configPath = "../avito-internship/config/apiserver.json"
 )
 
 func main() {

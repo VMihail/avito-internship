@@ -146,3 +146,18 @@ func getTransaction(experimentNames []string,
 	fmt.Println(result)
 	return result
 }
+
+func AddPercentageOfEmployeeToExperiment(percent float32, experimentNames []string) error {
+	logger.Info("method <AddPercentageOfEmployeeToExperiment> started")
+	employees, err := GetPercentageOfEmployee(percent)
+	if err != nil {
+		return err
+	}
+	for _, p := range employees {
+		err := AddEmployeeToExperiment(experimentNames, p.Id)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

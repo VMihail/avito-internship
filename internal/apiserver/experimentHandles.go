@@ -142,3 +142,20 @@ func (s *APIServer) getReportById() http.HandlerFunc {
 		}
 	}
 }
+
+func (s *APIServer) handleAddPercentageOfEmployeeToExperiment() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		percentage, err := strconv.ParseFloat(request.URL.Query().Get("percentage"), 8)
+		if err != nil {
+			writeError(writer, err)
+			return
+		}
+		a := request.URL.Query().Get("experiments")
+		err = store.AddPercentageOfEmployeeToExperiment(float32(percentage), strings.Split(a, ","))
+		if err != nil {
+			writeError(writer, err)
+			return
+		}
+		_, _ = io.WriteString(writer, "Successfully")
+	}
+}
